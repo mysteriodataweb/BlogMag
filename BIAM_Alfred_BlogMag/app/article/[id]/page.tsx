@@ -13,6 +13,8 @@ export default function ArticleDetailPage({ params }: { params: Promise<{ id: st
   const { id } = use(params)
   const [article, setArticle] = useState<Article | null>(null)
   const [loading, setLoading] = useState(true)
+  const [newComment, setNewComment] = useState("")
+  const [isPublished, setIsPublished] = useState(false)
 
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -55,6 +57,12 @@ export default function ArticleDetailPage({ params }: { params: Promise<{ id: st
         </main>
       </div>
     )
+  }
+
+  const handlePublishComment = () => {
+    if (!newComment.trim()) return
+    setIsPublished(true)
+    setNewComment("")
   }
 
   return (
@@ -158,6 +166,31 @@ export default function ArticleDetailPage({ params }: { params: Promise<{ id: st
             <h2 className="text-xl font-bold text-gray-900 mb-6">
               Commentaires ({commentaires.length})
             </h2>
+            <div className="bg-gray-50 rounded-xl p-4 mb-6">
+              <label htmlFor="commentaire" className="block text-sm font-medium text-gray-700 mb-2">
+                Ajouter un commentaire
+              </label>
+              <textarea
+                id="commentaire"
+                value={newComment}
+                onChange={(e) => {
+                  setNewComment(e.target.value)
+                  if (isPublished) setIsPublished(false)
+                }}
+                placeholder="Ecrivez votre commentaire..."
+                className="w-full min-h-28 rounded-lg border border-gray-300 p-3 text-sm text-gray-700 focus:outline-none focus:ring-2 focus:ring-orange-400"
+              />
+              <div className="mt-3 flex items-center gap-3">
+                <button
+                  type="button"
+                  onClick={handlePublishComment}
+                  className="btn bg-orange-500 hover:bg-orange-600 text-white border-none"
+                >
+                  Publier
+                </button>
+                {isPublished && <p className="text-sm text-green-600">commentaire publié</p>}
+              </div>
+            </div>
             <div className="flex flex-col gap-4">
               {commentaires.map((comment) => (
                 <CommentItem key={comment.id} comment={comment} />
